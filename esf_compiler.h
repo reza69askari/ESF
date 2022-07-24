@@ -98,11 +98,6 @@ twi_package_t package = {
 #include <preprocessor.h>
 #include <status_codes.h>
 
-//! >>>>>>> esf files
-#include <esf_deprecate.h>
-#include <common/esf_mask_position.h>
-#include <common/esf_errors.h>
-
 //! >>>>>>> States
 
 #ifndef UTILS_COMPILER_H
@@ -272,8 +267,19 @@ TotalSteps(InitSteps);
 #define aliasof(baseName)			__attribute__((alias(baseName)))
 #define AliasOf(baseName)			aliasof(STR(baseName))
 
+#define __unused					__attribute__((unused))
+
+#define __noinline					__attribute__ ((noinline))
+#define NoInline					__noinline
+
 #pragma endregion Attributes
 //! <<<<<<<<<<<<<<<< .Attributes <<<<<<<<<<<<<<<<
+
+//! >>>>>>> esf files
+#include <esf_deprecated.h>
+#include <utils/esf_mask_position.h>
+#include <utils/esf_errors.h>
+#include <utils/esf_stdlib.h>
 
 
 #endif // ESF_COMPILER_H_
