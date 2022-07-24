@@ -151,6 +151,13 @@ typedef enum State_enum
 #define Defined_NameValue(var)		"T " ##var "=" #var
 #define Concat(p1, p2)				p1 ## p2 //! Concat parts
 
+//! >>>>>>> events
+
+typedef status_code_t (*event_t ) (void );
+typedef status_code_t (*event_pt) (void*);
+typedef bool (*test_t ) (void );
+typedef bool (*test_pt) (void*);
+
 //! >>>>>>> To override methods
 
 /* alias of 'compiler_demux_size(...)'
