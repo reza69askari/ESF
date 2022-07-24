@@ -13,20 +13,22 @@
 #include <stdint.h>
 
 typedef struct tm tm_t, datetime_t, DateTime;
-#define YEAR_OFFSET		1900
-#define TimeYearOffset	YEAR_OFFSET
+#define YEAR_OFFSET					1900
+#define DateTime_YearOffset			YEAR_OFFSET
 typedef time_t timestamp_t, TimeStamp;
-#define TimeStampP		U32P
-/* Return converted time, effected by zone
- */
+#define TimeStampP					U32P
+
+/* Return converted time, effected by zone */
 #define TimeStamp2DateTime(ts)		(datetime_t *)localtime((const timestamp_t *)ts)
-/* Return converted time without zone effect
- */
+
+/* Return converted time without zone effect */
 #define TimeStamp2DateTime_UTC(ts)	(datetime_t *)gmtime((const timestamp_t *)ts)
+
 /* Convert Timestamp(time_t) to DateTime(datetime_t), 
  *   tm_wday & tm_yday are ignored and will be update if suggest.
  */
 #define DateTime2TimeStamp(tm)		(timestamp_t)mktime((datetime_t *)tm)
+
 /* Convert Timestamp(time_t) to DateTime(datetime_t), 
  *  tm_wday & tm_yday are ignored.
  */
