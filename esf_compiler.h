@@ -108,12 +108,15 @@ twi_package_t package = {
 #define DISABLE			0
 #define ENABLE			1
 #endif // !UTILS_COMPILER_H
+#define OK				0
 #define OFF				0
 #define ON				1
 #define RESET			0
 #define SET				1
 #define STOP			0
 #define RUN				1
+#define IsHandled		0 //! STATUS_OK
+#define NotHandled		1
 typedef enum State_enum
 {
 	Off					= OFF,
@@ -127,6 +130,18 @@ typedef enum State_enum
 //! >>>>>>> Size & Type
 
 #define void0			((void)0)
+#define NOP_FOO()		void0
+#define nop_foo()		NOP_FOO()
+
+#define CountZeroesFromLeft(x)		clz(x)	//! 0b00101000 -> 2
+#define CountZeroesFromRight(x)		ctz(x)	//! 0b00101000 -> 3
+
+//! Same as C#: a ?? b
+#define NotNull(a, b)	(a? a: b)
+
+//! inline absolute condition (shorter code instant using normal 'abs()')
+#define abs_condition(x, c)			(x == c || x == -c)
+#define absC(x, c)					abs_condition(x, c)
 
 /* to get size of an array, not size of reserved bytes on memory
  * Ex: U32 test[10] -> sizeof(test)=>40, sizeof_array(test)=>10
@@ -287,6 +302,7 @@ TotalSteps(InitSteps);
 #include <utils/esf_mask_position.h>
 #include <utils/esf_errors.h>
 #include <utils/esf_stdlib.h>
+#include <MPUs/esf_io.h>
 #include <utils/esf_log.h>
 
 

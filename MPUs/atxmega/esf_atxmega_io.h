@@ -31,45 +31,21 @@
 
 #define ioport_create_pin(port_id, pin) (port_id * 8 + (pin))
 
-#ifdef IOPORT_H
-typedef enum IO_Configuration_Flags_enum
-{
-	IO_Input				= IOPORT_DIR_INPUT,
-	IO_Output				= IOPORT_DIR_OUTPUT,
-	
-	/** \name Initial Output State Flags */
-	IO_InitLow				= IOPORT_INIT_LOW,		/*!< Initial Output State Low */
-	IO_InitHigh				= IOPORT_INIT_HIGH,		/*!< Initial Output State High */
-	
-	/** \name Input/Sense Configuration Flags */
-	IO_SenseBothEdges		= IOPORT_BOTHEDGES,		/*!< Sense Both Edges */
-	IO_SenseRising			= IOPORT_RISING,		/*!< Sense Rising Edge */
-	IO_SenseFalling			= IOPORT_FALLING,		/*!< Sense Falling Edge */
-	IO_SenseLowLevel		= IOPORT_LEVEL,			/*!< Sense Low Level */
-	#if XMEGA_E
-	IO_SenseForce			= IOPORT_FORCE_ENABLE,	/*!< Sense Force Input Enable Low Level */
-	#endif
-	IO_InputBufferDisable	= IOPORT_INPUT_DISABLE,	/*!< Input Buffer Disabled */
-	
-	/** \name Output and Pull Configuration Flags */
-	IO_Totem				= IOPORT_TOTEM,			/*!< Normal push/pull output */
-	IO_BusKeeper			= IOPORT_BUSKEEPER,		/*!< Bus Keeper */
-	IO_PullDOWN				= IOPORT_PULL_DOWN,		/*!< Pull-Down (when input) */
-	IO_PullUP				= IOPORT_PULL_UP,		/*!< Pull-Up (when input) */
-	IO_WiredOR				= IOPORT_WIRED_OR,		/*!< Wired OR */
-	IO_WiredAND				= IOPORT_WIRED_AND,		/*!< Wired AND */
-	IO_WiredOR_PullDOWN		= IOPORT_WIRED_OR_PULL_DOWN,	/*!< Wired OR and Pull-Down */
-	IO_WiredAND_PullUP		= IOPORT_WIRED_AND_PULL_UP,		/*!< Wired AND and Pull-Up */
-	
-	/** \name Inverted I/O Configuration Flags */
-	IO_InvertEnabled		= IOPORT_INV_ENABLED,	/*!< I/O is Inverted */
-	IO_InvertDisable		= IOPORT_INV_DISABLE,	/*!< I/O is Not Inverted */
-	
-	/** \name Slew Rate Limit Configuration Flags */
-	IO_SRL_Enabled			= IOPORT_SRL_ENABLED,	/*!< Slew Rate Limit Enabled */
-	IO_SRL_Disabled			= IOPORT_SRL_DISABLED,	/*!< Slew Rate Limit Disabled */
-} IO_ConfigureFlags_t;
-#endif // IOPORT_H
+#ifdef _XMEGA_GPIO_H_
+
+#define gpio_set_pin_level(pin, lvl)			ioport_set_pin_level(pin, lvl)
+//! > Pin
+#define PIN_on(pin)					gpio_set_pin_high(pin)
+#define PIN_off(pin)				gpio_set_pin_low(pin)
+#define PIN_tgl(pin)				gpio_toggle_pin(pin)
+#define PIN_lvl(pin, lvl)			gpio_set_pin_level(pin, lvl)
+//! > LED
+#define Led_on(pin)					PIN_on(pin)
+#define Led_off(pin)				PIN_off(pin)
+#define Led_tgl(pin)				PIN_tgl(pin)
+#define Led_lvl(pin, lvl)			PIN_lvl(pin, lvl)
+
+#endif // _XMEGA_GPIO_H_
 
 #pragma region IO_Check
 
