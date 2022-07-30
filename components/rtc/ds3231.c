@@ -41,6 +41,7 @@
 
 void ds3231_init(void)
 {
+	LogFunction();
 	twi_master_options_t opt = {
 		.speed = Config_DS3231_TwiSpeed,
 		.chip  = DS3231_ChipAddress
@@ -50,6 +51,7 @@ void ds3231_init(void)
 
 status_code_t ds3231_transfer(bool read, DS3231_Registers_t addr, void* buf, size_t len)
 {
+	LogDebug("DS3231 update request... A:%X - R/W:%d", addr, read);
 	if (!buf) { return ERR_NO_MEMORY; }
 	twi_package_t dPackage = {
 		//! TWI chip address to communicate with.
@@ -66,6 +68,7 @@ status_code_t ds3231_transfer(bool read, DS3231_Registers_t addr, void* buf, siz
 		.no_wait = false, //! false: do wait
 	};
 	status_code_t _s = twi_master_transfer(DS3231_TWI, &dPackage, read);
+	LogStruct(buf, len);
 	return _s;
 }
 
@@ -173,6 +176,7 @@ status_code_t ds3231_set_alarm(DS3231_Alerts_t alert, DS3231_Alarm_t* alarm, boo
 			return ds3231_write(DS3231_REG_Alarm2_Minutes, &alarm->Alarm1_Minutes, sizeof(DS3231_Alarm2_t));
 		default: break;
 	}
+	LogExceptionP(Error, ArgumentException, alert);
 	return ERR_INVALID_ARG;
 }
 

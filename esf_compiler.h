@@ -287,6 +287,7 @@ TotalSteps(InitSteps);
 #include <utils/esf_mask_position.h>
 #include <utils/esf_errors.h>
 #include <utils/esf_stdlib.h>
+#include <utils/esf_log.h>
 
 
 #endif // ESF_COMPILER_H_
