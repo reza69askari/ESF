@@ -6,11 +6,18 @@
  *  @Author: Mohammadreza Askari reza69.askari@gmail.com
  * @git-url: https://github.com/reza69askari/ESF
  */
+//////////////////////////////////////////////////////////////////////////
+//! #Requires:
+//
+//! #Options:
+// #define Conf_TimeKeeper		1//! DS3231_RTC
+//////////////////////////////////////////////////////////////////////////
 
 #ifndef ESF_RTC_H_
 #define ESF_RTC_H_
 
 #define Internal_RTC			0
+#define DS3231_RTC				1
 
 #include <conf_board.h>
 #include <esf_compiler.h>
@@ -26,6 +33,13 @@
 #endif
 #if (Conf_TimeKeeper == Internal_RTC)
 #	include <rtc.h> //! add it on ASF
+#elif (Conf_TimeKeeper == DS3231_RTC)
+#	include <components/rtc/ds3231.h>
+#	if (defined RTC_H || defined DRIVERS_RTC_RTC_H)
+#		error "Conflict with asf, remove rtc on ASF-Wizard!"
+#	endif
+#	define __ExterTimeKeeper	ds3231
+#	include "include/esf_rtc_ds3231.h"
 #else
 #	error NotImplementedException
 #endif
