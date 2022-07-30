@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <compiler.h>
+#include <asf.h>
 #include <esf_compiler.h>
 #include <MPUs/esf_io.h>
 
