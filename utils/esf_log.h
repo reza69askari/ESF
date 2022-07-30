@@ -75,6 +75,8 @@ static inline void _Log(LogLvl_t lvl, PGM_P format, ...)
 #define Log(lvl, s, ...)				_Log(lvl, PSTR(s), ##__VA_ARGS__)
 
 //! > Optional
+#include "include/esf_log_extension.h"
+#include "include/esf_log_info.h"
 #include "esf_errors.h"
 #include "esf_string.h"
 #include "esf_string_progmem.h"
