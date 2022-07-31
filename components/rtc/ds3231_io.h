@@ -6,6 +6,11 @@
  * @git-url: https://github.com/reza69askari/ESF
  */
 
+//////////////////////////////////////////////////////////////////////////
+//                              TWI-DS3231                              //
+//          Extremely Accurate I2C-Integrated RTC/TCXO/Crystal          //
+//////////////////////////////////////////////////////////////////////////
+
 #ifndef DS3231_IO_H_
 #define DS3231_IO_H_
 
