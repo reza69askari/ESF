@@ -14,7 +14,6 @@
 #define ESF_XMEGA_TC_H_
 
 #include <asf.h>
-#include <esf_compiler.h>
 
 #ifdef _TC_H_
 

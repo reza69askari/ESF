@@ -9,9 +9,7 @@
 #ifndef ESF_ATXMEAG_IO_H_
 #define ESF_ATXMEAG_IO_H_
 
-#include <esf_compiler.h>
 #include <stdio.h>
-#include <asf.h>
 
 //! > require ASF must include
 #ifndef CONF_CLOCK_H_INCLUDED
@@ -24,16 +22,16 @@
 #	warning "Add 'NVM - Non Volatile Memory (driver)' in ASF"
 #endif
 
-#define DMA_CHANNEL_0			0
-#define DMA_CHANNEL_1			1
-#define DMA_CHANNEL_2			2
-#define DMA_CHANNEL_3			3
+#define DMA_CHANNEL_0				0
+#define DMA_CHANNEL_1				1
+#define DMA_CHANNEL_2				2
+#define DMA_CHANNEL_3				3
 
 #define ioport_create_pin(port_id, pin) (port_id * 8 + (pin))
 
 #ifdef _XMEGA_GPIO_H_
 
-#define gpio_set_pin_level(pin, lvl)			ioport_set_pin_level(pin, lvl)
+#define gpio_set_pin_level(pin, lvl) ioport_set_pin_level(pin, (lvl))
 //! > Pin
 #define PIN_on(pin)					gpio_set_pin_high(pin)
 #define PIN_off(pin)				gpio_set_pin_low(pin)
@@ -193,6 +191,7 @@ typedef union deviceInfo {
 #include "include/esf_xmega_tc.h"
 #include "include/esf_xmega_usart.h"
 #include "include/esf_xmega_spi.h"
+#include "include/esf_xmega_peripherals.h"
 
 
 #endif /* ESF_ATXMEAG_IO_H_ */

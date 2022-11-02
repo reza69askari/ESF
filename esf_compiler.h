@@ -94,6 +94,7 @@ twi_package_t package = {
 
 //! >>>>>>> exist files
 #include <conf_board.h>
+#include <utils/esf_errors.h>
 #include <compiler.h>
 #include <preprocessor.h>
 #include <status_codes.h>
@@ -127,6 +128,8 @@ typedef enum State_enum
 	Set					= SET,
 } state_t, State_t;
 
+#define RiseFlag(flag)	flag = true
+
 //! >>>>>>> Size & Type
 
 #define void0			((void)0)
@@ -148,7 +151,7 @@ typedef enum State_enum
  * */
 #define sizeof_array(array)			(sizeof((array))/sizeof((array[0])))
 
-#define IS_SIGNED_TYPE(v)			((typeof(v))-1 <= 0)
+#define IS_SIGNED_TYPE(v)			((typeof((v)))-1 <= 0)
 #define IsSigned(v)					( IS_SIGNED_TYPE(v))
 #define IsUnsigned(v)				(!IS_SIGNED_TYPE(v))
 
@@ -298,12 +301,29 @@ TotalSteps(InitSteps);
 //! <<<<<<<<<<<<<<<< .Attributes <<<<<<<<<<<<<<<<
 
 //! >>>>>>> esf files
+#include <asf.h>
 #include <esf_deprecated.h>
 #include <utils/esf_mask_position.h>
-#include <utils/esf_errors.h>
 #include <utils/esf_stdlib.h>
 #include <MPUs/esf_io.h>
 #include <utils/esf_log.h>
+
+#if defined(_ASSERT_ENABLE_)
+#	if defined(TEST_SUITE_DEFINE_ASSERT_MACRO)
+// Assert() is defined in unit_test/suite.h
+#		include "unit_test/suite.h"
+#	else
+#		ifdef Assert
+#			undef Assert
+#		endif
+#		define Assert(expr)		if (!(expr)) { LogCritical("#AppFreezed"); while (true); }
+#	endif
+#else
+#	ifdef Assert
+#		undef Assert
+#	endif
+#	define Assert(expr) ((void) 0)
+#endif
 
 
 #endif // ESF_COMPILER_H_

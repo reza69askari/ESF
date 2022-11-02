@@ -18,40 +18,40 @@
 typedef ioport_pin_t pin_t;
 typedef enum IO_Configuration_Flags_enum
 {
-	IO_Input				= IOPORT_DIR_INPUT,
-	IO_Output				= IOPORT_DIR_OUTPUT,
+	IO_Input						= IOPORT_DIR_INPUT,
+	IO_Output						= IOPORT_DIR_OUTPUT,
 	
 	/** \name Initial Output State Flags */
-	IO_InitLow				= IOPORT_INIT_LOW,		/*!< Initial Output State Low */
-	IO_InitHigh				= IOPORT_INIT_HIGH,		/*!< Initial Output State High */
+	IO_InitLow						= IOPORT_INIT_LOW,		/*!< Initial Output State Low */
+	IO_InitHigh						= IOPORT_INIT_HIGH,		/*!< Initial Output State High */
 	
 	/** \name Input/Sense Configuration Flags */
-	IO_SenseBothEdges		= IOPORT_BOTHEDGES,		/*!< Sense Both Edges */
-	IO_SenseRising			= IOPORT_RISING,		/*!< Sense Rising Edge */
-	IO_SenseFalling			= IOPORT_FALLING,		/*!< Sense Falling Edge */
-	IO_SenseLowLevel		= IOPORT_LEVEL,			/*!< Sense Low Level */
+	IO_SenseBothEdges				= IOPORT_BOTHEDGES,		/*!< Sense Both Edges */
+	IO_SenseRising					= IOPORT_RISING,		/*!< Sense Rising Edge */
+	IO_SenseFalling					= IOPORT_FALLING,		/*!< Sense Falling Edge */
+	IO_SenseLowLevel				= IOPORT_LEVEL,			/*!< Sense Low Level */
 	#if XMEGA_E
-	IO_SenseForce			= IOPORT_FORCE_ENABLE,	/*!< Sense Force Input Enable Low Level */
+	IO_SenseForce					= IOPORT_FORCE_ENABLE,	/*!< Sense Force Input Enable Low Level */
 	#endif
-	IO_InputBufferDisable	= IOPORT_INPUT_DISABLE,	/*!< Input Buffer Disabled */
+	IO_InputBufferDisable			= IOPORT_INPUT_DISABLE,	/*!< Input Buffer Disabled */
 	
 	/** \name Output and Pull Configuration Flags */
-	IO_Totem				= IOPORT_TOTEM,			/*!< Normal push/pull output */
-	IO_BusKeeper			= IOPORT_BUSKEEPER,		/*!< Bus Keeper */
-	IO_PullDOWN				= IOPORT_PULL_DOWN,		/*!< Pull-Down (when input) */
-	IO_PullUP				= IOPORT_PULL_UP,		/*!< Pull-Up (when input) */
-	IO_WiredOR				= IOPORT_WIRED_OR,		/*!< Wired OR */
-	IO_WiredAND				= IOPORT_WIRED_AND,		/*!< Wired AND */
-	IO_WiredOR_PullDOWN		= IOPORT_WIRED_OR_PULL_DOWN,	/*!< Wired OR and Pull-Down */
-	IO_WiredAND_PullUP		= IOPORT_WIRED_AND_PULL_UP,		/*!< Wired AND and Pull-Up */
+	IO_Totem						= IOPORT_TOTEM,			/*!< Normal push/pull output */
+	IO_BusKeeper					= IOPORT_BUSKEEPER,		/*!< Bus Keeper */
+	IO_PullDOWN						= IOPORT_PULL_DOWN,		/*!< Pull-Down (when input) */
+	IO_PullUP						= IOPORT_PULL_UP,		/*!< Pull-Up (when input) */
+	IO_WiredOR						= IOPORT_WIRED_OR,		/*!< Wired OR */
+	IO_WiredAND						= IOPORT_WIRED_AND,		/*!< Wired AND */
+	IO_WiredOR_PullDOWN				= IOPORT_WIRED_OR_PULL_DOWN,	/*!< Wired OR and Pull-Down */
+	IO_WiredAND_PullUP				= IOPORT_WIRED_AND_PULL_UP,		/*!< Wired AND and Pull-Up */
 	
 	/** \name Inverted I/O Configuration Flags */
-	IO_InvertEnabled		= IOPORT_INV_ENABLED,	/*!< I/O is Inverted */
-	IO_InvertDisable		= IOPORT_INV_DISABLE,	/*!< I/O is Not Inverted */
+	IO_InvertEnabled				= IOPORT_INV_ENABLED,	/*!< I/O is Inverted */
+	IO_InvertDisable				= IOPORT_INV_DISABLE,	/*!< I/O is Not Inverted */
 	
 	/** \name Slew Rate Limit Configuration Flags */
-	IO_SRL_Enabled			= IOPORT_SRL_ENABLED,	/*!< Slew Rate Limit Enabled */
-	IO_SRL_Disabled			= IOPORT_SRL_DISABLED,	/*!< Slew Rate Limit Disabled */
+	IO_SRL_Enabled					= IOPORT_SRL_ENABLED,	/*!< Slew Rate Limit Enabled */
+	IO_SRL_Disabled					= IOPORT_SRL_DISABLED,	/*!< Slew Rate Limit Disabled */
 } IO_ConfigureFlags_t;
 
 #endif // IOPORT_H
@@ -95,6 +95,7 @@ static inline void tc_set_max_resolution(volatile void *tc, uint32_t resolution)
 static inline void tc_set_periode_and_source (volatile void *tc, uint32_t tc_tick_hz)
 {
 	tc_set_max_resolution(tc, tc_tick_hz);
+	//tc_write_period(tc, (tc_get_resolution(tc) / tc_tick_hz));
 	tc_write_period(tc, (tc_get_resolution(tc) / tc_tick_hz) -1);
 }
 
@@ -121,20 +122,29 @@ static inline void pwm_start_channel(struct pwm_config *config, enum tc_cc_chann
 //! >>>>>>>>>>>>>>>> SPI Master <<<<<<<<<<<<<<<<
 #ifdef _SPI_MASTER_H_
 
-static U8 spi_write_void(SPI_t *spi, U8 value, size_t len)
+__always_inline static void spi_write_byte(SPI_t* spi, const U8 value)
+{
+	spi_write_packet(spi, &value, 1); //Dummy write
+}
+__always_inline static void spi_write_dummy(SPI_t* spi, const U8 value, size_t len)
 {
 	while (len--) {
-		spi_write_single(spi, value);
-		
+		spi_write_byte(spi, value);
+	}
+}
+__always_inline static void spi_read_byte(SPI_t* spi, U8* data)
+{
+	spi_read_packet(spi, data, 1);
+}
+static inline void spi_read_packet_dummy(SPI_t* spi, U8* data, size_t len, U8 dummy)
+{
+	while (len--) {
+		spi_write_single(spi,dummy); //Dummy write
 		while (!spi_is_rx_full(spi)) {
 		}
+		spi_read_single(spi, data);
+		data++;
 	}
-	
-	return spi_get(spi);
-}
-static inline U8 spi_read_void(SPI_t *spi, size_t len)
-{
-	return spi_write_void(spi, CONFIG_SPI_MASTER_DUMMY, len); //Dummy write
 }
 
 #endif // _SPI_MASTER_H_

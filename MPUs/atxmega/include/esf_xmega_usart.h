@@ -36,7 +36,7 @@
 
 #include <config/conf_usart_serial.h>
 //#include <usart_serial.h>
-static bool usart_init(usart_if usart, uint32_t baudrate)
+static inline bool usart_init(usart_if usart, uint32_t baudrate)
 {
 	usart_rs232_options_t usart_options = {
 		.baudrate = baudrate,//USART_SERIAL_BAUDRATE,
