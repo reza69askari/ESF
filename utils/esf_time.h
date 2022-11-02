@@ -22,9 +22,12 @@
 
 //! >>>>>>> Time-Setters
 
+//(tm_t*){ [sec], [min], [hour], [mday], [//.tm_wday=0], [mon], [year], [//.tm_yday	= ], [//.tm_isdst = ] }
+
 static inline void time_update_system_time(void)
 {
-	set_system_time(rtc_get_time());
+	timestamp_t _ts = rtc_get_time();
+	if (_ts) { set_system_time(_ts); }
 }
 
 /*
@@ -63,7 +66,7 @@ TimeSet(&(tm_t*){
 		.tm_hour	= 2,
 		.tm_mday	= 3,
 		//.tm_wday	= 0,
-		.tm_mon 	= 6,
+		.tm_mon 	= 6-1,
 		.tm_year	= 2022-1900,
 		//.tm_yday	= ,
 		//.tm_isdst	= ,
@@ -159,15 +162,36 @@ static inline string time_get_string(void)
 	return time_get_format_r(FullDateTime, _time, PrintTime_Required);
 }
 
-inline void print_time (void)
+/* 
+ * malloc is used, free it after usage.
+ * */
+inline string print_time (void)
 {
+	//static string _time = NULL;
+	//if (!_time) { _time = (string)malloc(23 +5); memset(_time, 0, 23 +5); }
+	//time_get_format_r(yyyy"/"MM"/"dd" "HH":"mm":"ss, _time, 23 +5);
+	//size_t _look = strlen(_time);
+	//string _buf = _time +_look;
+	//#if (defined SystemTime_TC) //TODO: #ToDo system-time, and use RTC as tick of 1Hz... & add bool updateRequest
+	//sprintf(_buf, ".%05u", (SystemTime_TC)->CNT);
+	//#elif (defined SystemTick_TC)
+	//sprintf(_buf, ".%05u", (SystemTick_TC)->CNT);
+	//#endif
+	//return _time;
+	
+	string _time = time_get_ISO();
+	//string _buf = (string)malloc(strlen(_time) +7);
+	static string _buf = NULL;
+	if(!_buf) { _buf = (string)malloc(20 +7); }
 	#if (defined SystemTime_TC) //TODO: #ToDo system-time, and use RTC as tick of 1Hz... & add bool updateRequest
-	printf_P("%s.%05u\t", time_get_ISO(), SystemTime_TC.CNT);
+	sprintf(_buf, "%s.%05u", _time, (SystemTime_TC)->CNT);
 	#elif (defined SystemTick_TC)
-	printf_P("%s.%05u\t", time_get_ISO(), SystemTick_TC.CNT);
+	sprintf(_buf, "%s.%05u", _time, (SystemTick_TC)->CNT);
 	#else
-	printf_P("%s\t", time_get_ISO());
+	sprintf(_buf, "%s", _time);
 	#endif
+	//free(_buf); //! #Mind: do it manually
+	return _buf;
 }
 
 //! >>>>>>> >>>>>>> call me in a timer with 1Hz overflow
@@ -178,6 +202,7 @@ __always_inline static void Time_callback (void)
 
 static inline void time_init (void)
 {
+	LOG_FUNCTION();
 	rtc_init();
 	
 	//! if has time keeper, load system time from it
