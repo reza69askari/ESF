@@ -9,7 +9,6 @@
 #ifndef ESF_Wait_Helper_H_
 #define ESF_Wait_Helper_H_
 
-#include <asf.h>
 #include <util/delay.h>
 #include <esf_compiler.h>
 
@@ -40,10 +39,11 @@ static inline void Wait(U16 delay)
  */
 static inline status_code_t WaitUntil (event_t condition, uint16_t timeout_us)
 {
+	Assert(timeout_us);
 	do {
 		asm("nop");
 		_delay_us(1);
-	} while(condition() != STATUS_OK && timeout_us--);
+	} while(condition() != STATUS_OK && --timeout_us);
 	if (!timeout_us) { return ERR_TIMEOUT; }
 	return STATUS_OK;
 }
@@ -58,9 +58,11 @@ static inline status_code_t WaitUntil (event_t condition, uint16_t timeout_us)
 	return STATUS_OK;
  * </code>
  */
-#define WaitUntil_Action(func, timeout_us, timeout_initialize)	do { \
+#define WaitUntil_Action(func, timeout_us, timeout_initialize) \
+	do { \
+		Assert(timeout_initialize); \
 		timeout_us = timeout_initialize; \
-		do { asm("nop"); _delay_us(1); } while(func != STATUS_OK && timeout_us--); \
+		do { asm("nop"); _delay_us(1); } while(func != STATUS_OK && --timeout_us); \
 	} while (0);
 
 /**
@@ -73,10 +75,11 @@ static inline status_code_t WaitUntil (event_t condition, uint16_t timeout_us)
  */
 static inline status_code_t WaitUntil_ms (event_t condition, uint16_t timeout_ms)
 {
+	Assert(timeout_ms);
 	do {
 		asm("nop");
 		_delay_ms(1);
-	} while(condition() != STATUS_OK && timeout_ms--);
+	} while(condition() != STATUS_OK && --timeout_ms);
 	if (!timeout_ms) { return ERR_TIMEOUT; }
 	return STATUS_OK;
 }
@@ -88,22 +91,23 @@ static inline status_code_t WaitUntil_ms (event_t condition, uint16_t timeout_ms
 /* 
  * \param bHigh: 'T' wait for pin be HIGH (wait while pin is low), 'F' wait for pin be LOW (wait while pin is high)
  * */
-static inline status_code_t WaitForPin_Level (ioport_pin_t pin, bool reachHigh, uint16_t timeout_us)
+static inline status_code_t WaitForPin_Level (ioport_pin_t pin, bool reachHigh, uint32_t timeout_us)
 {
+	Assert(timeout_us);
 	do {
 		asm("nop");
 		_delay_us(1);
-	} while(reachHigh == gpio_pin_is_low(pin) && timeout_us--);
+	} while(reachHigh == gpio_pin_is_low(pin) && --timeout_us);
 	if (!timeout_us) { return ERR_TIMEOUT; }
 	return STATUS_OK;
 }
 /* wait for pin be HIGH (wait while pin is low) */
-static inline status_code_t WaitForPin_HI (ioport_pin_t pin, uint16_t timeout_us)
+static inline status_code_t WaitForPin_HI (ioport_pin_t pin, uint32_t timeout_us)
 {
 	return WaitForPin_Level(pin, HIGH, timeout_us);
 }
 /* wait for pin be LOW (wait while pin is high) */
-static inline status_code_t WaitForPin_LO (ioport_pin_t pin, uint16_t timeout_us)
+static inline status_code_t WaitForPin_LO (ioport_pin_t pin, uint32_t timeout_us)
 {
 	return WaitForPin_Level(pin, LOW, timeout_us);
 }
