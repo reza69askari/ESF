@@ -10,7 +10,6 @@
 //! >>>>>>> AD7190-Component-Library
 #include <conf_board.h>
 #include "AD5282.h"
-#include <asf.h>
 #include <esf_compiler.h>
 
 //! >>>>>>>>>>>>>>>> Checker >>>>>>>>>>>>>>>>
@@ -41,7 +40,7 @@
 
 status_code_t AD5282_Init(void)
 {
-	LogFunction();
+	LOG_FUNCTION();
 	twi_master_options_t opt = {
 		.speed = Config_AD5282_TwiSpeed,
 		.chip  = _AD5282_Address
@@ -51,22 +50,26 @@ status_code_t AD5282_Init(void)
 
 status_code_t AD5282_Write(AD5282_CH_t channel, AD5282_Opt_t options, U8 value)
 {
+	LogDebug("AD5282 write request... C:%X O:%X V:%u(%X)", channel, options, value, value);
 	twi_package_t dPotPackage = {
 		.chip = _AD5282_Address, //! Chip address Byte
-		.addr = value2array24((channel & AD5282_AB_bp) | (options & AD5282_Options_gm)), //! Instruction Byte
+		.addr = value2array24((channel & AD5282_AB_bm) | (options & AD5282_Options_gm)), //! Instruction Byte
 		.addr_length = 1,
 		.buffer = &value, //! Data Byte
 		.length = 1,
 		.no_wait = false, //! do wait
 	};
+	LOG_ASSERT(!(pmic_get_enabled_levels() & CONF_PMIC_INTLVL), STR(IOException));
 	status_code_t status = twi_master_write(AD5282_TWI, &dPotPackage);
-	if (status != STATUS_OK) { return status; }
+	LOG_ASSERT(status != STATUS_OK, "TWI write error!");
 	
 	//! Verify wrote data
 	U8 reader = 0;
 	dPotPackage.buffer = &reader;
 	status = twi_master_read(AD5282_TWI, &dPotPackage);
-	if (status != STATUS_OK) { return status; }
+	if (status != STATUS_OK) { LogParameter_lvl(Error, status); return status; }
+	LOG_ASSERT(status != STATUS_OK, "TWI read error!");
 	
+	LOG_ASSERT(value != reader, "AD5282 verification failed!");
 	return value == reader ? STATUS_OK : ERR_IO_ERROR;
 }
