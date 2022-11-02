@@ -24,15 +24,17 @@
 
 #include <conf_board.h>
 
+#ifdef DEBUG
+#	define BuildType	"Debug"
+#else
+#	define BuildType	"Release"
+#endif // DEBUG
+
 static inline void Log_Info(void)
 {
 	LogInformation(NL NL NL NL ">>>>>>>>>> >>>>>>>>>> " Device_Name " " Device_Version Device_BuildVersion " <<<<<<<<<< <<<<<<<<<< ");
 	LogInformation(NL ">>>>>>>>>> Hardware Released on " Device_HardwareRelease " <<<<<<<<<< ");
-	#ifdef DEBUG
-	LogInformation(NL ">>>>>>>>>> Debug mode, build on %s %s <<<<<<<<<< ", __DATE__, __TIME__);
-	#else
-	LogInformation(NL ">>>>>>>>>> Release mode, build on %s %s <<<<<<<<<< ", __DATE__, __TIME__);
-	#endif // DEBUG
+	LogInformation(NL ">>>>>>>>>> " BuildType " mode, build on %s %s <<<<<<<<<< ", __DATE__, __TIME__);
 	//...
 	LogInformation(NL);
 }

@@ -11,15 +11,15 @@
 
 #include <progmem.h>
 
-#define PGMP			PSTR("%S")
+#define PGMP						PSTR("%S")
 
 /* String into program-memory area
- * Ex: string_P(txtHelp, "Welcome to help center");
+ * Ex: string_P(txtGuide0, "Welcome to help center");
  */
 #define string_P(var, str)			static const char var[] PROGMEM = str
 
 /* Same as 'string_P(...)' include parameters name taker
- * Ex: string_PS(txtHelp, SetupPage_gc); //txtHelp = "SetupPage_gc"
+ * Ex: string_PS(txtGuide0, SetupPage_gc); //txtGuide0 = "SetupPage_gc"
  */
 #define string_PS(micro)			string_P(txt ## micro, STR(micro))
 
@@ -42,6 +42,7 @@
 #define string_PReadString(mem)		(PGM_P)pgm_read_word(mem)
 #define string_PReadFormat(mem)		string_PReadString(mem)
 #define string_PRF(mem)				string_PReadFormat(mem)
+#define string_PReadChar(mem)		pgm_read_byte(mem)
 
 
 #endif // ESF_STRING_PROGMEM_H_
