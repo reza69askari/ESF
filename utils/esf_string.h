@@ -10,7 +10,10 @@
 #define ESF_STRING_H_
 
 #include <string.h>
+#include <ctype.h>
 #include <compiler.h>
+
+#define memclr(mem)								memset(mem, 0, Max(sizeof((mem)), sizeof((*mem))))
 
 typedef char* string;
 
@@ -28,14 +31,37 @@ typedef char* string;
 /* test if 'str' is started by any char of 'looking' ? */
 #define StrStartedAny(str, characters)			(strchr(characters, ((str)[0])) != NULL)//(StrPointOfAny(str, characters) == str)
 
+#define StrMatch(str, txt)						((!str && !txt) || (str && txt && strcmp(str, txt) == 0))
+
 /* Number of characters while str is not equal to any of look */
 #define StrlenUntil(str, look)					strcspn(str, look)
 /* Number of characters while str is equal to any of look */
 #define StrlenWhile(str, look)					strspn(str, look)
 /* Take string while it's characters not equal to any of look */
 #define StrTakeUntil(str, src, look)			strncpy(str, src, strcspn(src, look))
+#define StrTakeUpto(str, src, look, max)		do { size_t _max = strcspn(src, look); _max = Min(_max, max); strncpy(str, src, _max); } while (0);
 /* Take string while it's characters equal to any of look */
 #define StrTakeWhile(str, src, look)			strncpy(str, src, strspn(src, look))
+
+static inline string StrTrimStart (string txt)
+{
+	while(isspace(*txt)) txt++;
+	return txt;
+}
+static inline string StrTrimEnd (string txt)
+{
+	string back = txt +strlen(txt);
+	while(isspace(*(--back)));
+	*(back +1) = '\0';
+	return txt;
+}
+static inline string StrTrim (string txt)
+{
+	return StrTrimEnd(StrTrimStart(txt));
+}
+#define TrimStart(txt)							StrTrimStart(txt)
+#define TrimEnd(txt)							StrTrimEnd(txt)
+#define Trim(txt)								StrTrim(txt)
 
 /*
  * return index of 'value' from begin of 'str'
