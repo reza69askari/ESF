@@ -124,5 +124,12 @@
 #define floatP			"%f"
 #define doubleP			"%lf"
 
+//! >>>>>>> Scan
+
+#define  S8S	"%hhd"
+#define S16S	"%d"//"%hd"
+#define  U8SX	"%hhX"
+#define  U8S	"%hhu"
+
 
 #endif // ESF_PRINT_TYPE_H_

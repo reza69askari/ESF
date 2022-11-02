@@ -31,7 +31,7 @@
 #define	HH				"%H"	/* "02"			%H hour (24-hour clock) (00–23). [tm_hour] */
 #define	hh				"%I"	/* "02"			%I hour (12-hour clock) (01–12). [tm_hour] */
 #define	mm				"%M"	/* "07"			%M minute (00–59). [tm_min] */
-#define	ss				"%S"	/* "04"			%S second (00–60). [tm_sec] */
+#define	ss				"%S"	/* "04"			%S second (00–59). [tm_sec] */
 #define	tt				"%p"	/* "AM"			%p AM/PM. [tm_hour] */
 #define	k				"%z"	/* "+0330"		%z offset from UTC in the ISO 8601 format "-0430" (meaning 4 hours 30 minutes behind UTC, west of Greenwich), or by no characters if no time zone is determinable. [tm_isdst] */
 #define	wyday			"%V"	/* "26"			%V ISO 8601 week number (01–53). [tm_year, tm_wday, tm_yday] */
