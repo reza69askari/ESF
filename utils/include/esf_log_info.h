@@ -33,6 +33,9 @@
 static inline void Log_Info(void)
 {
 	LogInformation(NL NL NL NL ">>>>>>>>>> >>>>>>>>>> " Device_Name " " Device_Version Device_BuildVersion " <<<<<<<<<< <<<<<<<<<< ");
+	#ifdef Device_Manufacture
+	LogInformation(NL ">>>>>>>>>> Producted by " Device_Manufacture " <<<<<<<<<< ");
+	#endif // Device_Manufacture
 	LogInformation(NL ">>>>>>>>>> Hardware Released on " Device_HardwareRelease " <<<<<<<<<< ");
 	LogInformation(NL ">>>>>>>>>> " BuildType " mode, build on %s %s <<<<<<<<<< ", __DATE__, __TIME__);
 	//...
