@@ -33,16 +33,33 @@
  * Ex: printf("Welcome %S", string_PReadMemory(&users[2]))
  */
 #define string_PReadMemory(mem)		(wchar_t *)pgm_read_word(&mem)
+/* to pass program-string parameter into format of %S
+ * */
 #define string_PReadParam(mem)		string_PReadMemory(mem)
+/* Alias of 'string_PReadParam'
+ * to pass program-string parameter into format of %S
+ * */
 #define string_PRP(mem)				string_PReadParam(mem)
 
-/* to get string from program memory and pass it to function (** as function format **)
+/* to get string from program memory and pass it to function (** as function format ** OR constant-string(PGM_P))
  * Ex: printf(string_PReadString(&GuidMessages[2]))
  */
 #define string_PReadString(mem)		(PGM_P)pgm_read_word(mem)
+/* to get FORMAT-string from program memory
+ * */
 #define string_PReadFormat(mem)		string_PReadString(mem)
+/* Alias of 'string_PReadFormat'
+ * to get FORMAT-string from program memory
+ * */
 #define string_PRF(mem)				string_PReadFormat(mem)
+/* 
+ * */
 #define string_PReadChar(mem)		pgm_read_byte(mem)
+
+/* to pass const string as PGM_P, don't need to read them manually
+ * Ex: printf_P(PSTR("%S"), string_PReadText(txtGuide0));
+ * */
+#define string_PReadText(txt)		txt
 
 
 #endif // ESF_STRING_PROGMEM_H_

@@ -74,16 +74,20 @@ typedef struct stream_advanced_struct
 
 #define stream_get_udata(stream)	((udata_t*)(((sio_t*)(stream))->udata))
 
+#define ___ExFlags(_ud, iop) \
+	do { \
+		if (c == '\n') { \
+			if (!HasFlag(_ud->exflags, __S_DAR)) { iop; } \
+			if (HasFlag(_ud->exflags, __S_ANL)) { return 0; } \
+		} else if (c == '\r') { if (!HasFlag(_ud->exflags, __S_DAR)) { return 0; } } \
+	} while (0);
+
 #ifdef _USART_H_
 static inline int stream_putc_usart(char c, sio_t* stream)
 {
 	udata_t* _ud = stream_get_udata(stream);
 	USART_t* _io = (USART_t*)_ud->io;
-	if (c == '\n')
-	{
-		if (!HasFlag(_ud->exflags, __S_DAR)) { usart_putchar(_io, '\r'); }
-		if (HasFlag(_ud->exflags, __S_ANL)) { return 0; }
-	}
+	___ExFlags(_ud, usart_putchar(_io, '\r'));
 	usart_putchar(_io, c);
 	return 0;
 }
@@ -96,11 +100,7 @@ static inline int stream_putc_usb(char c, sio_t* stream)
 {
 	udata_t* _ud = stream_get_udata(stream);
 	if (!udi_cdc_is_tx_ready()) { return ERR_FLUSHED; }
-	if (c == '\n')
-	{
-		if (!HasFlag(_ud->exflags, __S_DAR)) { udi_cdc_putc('\r'); }
-		if (HasFlag(_ud->exflags, __S_ANL)) { return 0; }
-	}
+	___ExFlags(_ud, udi_cdc_putc('\r'));
 	udi_cdc_putc(c);
 	return 0;
 }

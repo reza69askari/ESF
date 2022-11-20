@@ -20,7 +20,6 @@
 #define ESF_TICK_H_
 
 #include <conf_board.h>
-#include <asf.h>
 #include <esf_compiler.h>
 
 typedef U16 Tick_t;
@@ -66,7 +65,7 @@ typedef enum Tick_Divition_enum
 
 static inline void SystemTick_Init(void)
 {
-	LogFunction();
+	LOG_FUNCTION();
 	tc_enable(SystemTick_TC);
 	#ifdef Conf_SystemTick_Source
 	Conf_SystemTick_Source_Init();
@@ -81,10 +80,10 @@ static inline void SystemTick_Init(void)
 	tc_set_wgm(SystemTick_TC, TC_WG_NORMAL);
 	
 	//! Log
-	LogTraceParam((F_CPU / Conf_SystemTick_PreScale));
-	LogTraceParam(_TickmSbase);
-	LogTraceParam(1000.0/(F_CPU/Conf_SystemTick_PreScale)*(2<< 0));
-	LogTraceParam(1000.0/(F_CPU/Conf_SystemTick_PreScale)*(2<<15));
+	LogParameter((F_CPU / Conf_SystemTick_PreScale));
+	LogParameter(_TickmSbase);
+	LogParameter((1000.0/(F_CPU/Conf_SystemTick_PreScale))*(2<< 0));
+	LogParameter((1000.0/(F_CPU/Conf_SystemTick_PreScale))*(2<<15));
 	
 }
 
@@ -113,14 +112,17 @@ static inline Tick_t SystemTick_Test (void)
 	return _Flags;
 }
 
+//bool SystemTick_Test_uS (Tick_t tick, U16 uS)
+
 static inline bool SystemTick_Test_mS (Tick_t tick, U16 mS)
 {
 	if (tick == 0) { return false; }
 	Tick_t _look = 1;
+	mS >>= 1;
 	while((mS / _TickmSbase) >= 1) {
 		_look <<= 1;
 		mS >>= 1; //! to prevent massive memory usage
-		if (tick < _look) { return false; }
+		if (tick < _look) { return false; } //! prevent calculate if there is no flags left
 	}
 	return (tick & _look) != 0;
 }
