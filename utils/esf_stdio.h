@@ -74,12 +74,12 @@ typedef struct stream_advanced_struct
 
 #define stream_get_udata(stream)	((udata_t*)(((sio_t*)(stream))->udata))
 
-#define ___ExFlags(_ud, iop) \
+#define ___ExFlags(c, exflags, iop) \
 	do { \
 		if (c == '\n') { \
-			if (!HasFlag(_ud->exflags, __S_DAR)) { iop; } \
-			if (HasFlag(_ud->exflags, __S_ANL)) { return 0; } \
-		} else if (c == '\r') { if (!HasFlag(_ud->exflags, __S_DAR)) { return 0; } } \
+			if (!HasFlag(exflags, __S_DAR)) { iop; } \
+			if (HasFlag(exflags, __S_ANL)) { return 0; } \
+		} else if (c == '\r') { if (!HasFlag(exflags, __S_DAR)) { return 0; } } \
 	} while (0);
 
 #ifdef _USART_H_
@@ -87,7 +87,7 @@ static inline int stream_putc_usart(char c, sio_t* stream)
 {
 	udata_t* _ud = stream_get_udata(stream);
 	USART_t* _io = (USART_t*)_ud->io;
-	___ExFlags(_ud, usart_putchar(_io, '\r'));
+	___ExFlags(c, _ud->exflags, usart_putchar(_io, '\r'));
 	usart_putchar(_io, c);
 	return 0;
 }
@@ -100,7 +100,7 @@ static inline int stream_putc_usb(char c, sio_t* stream)
 {
 	udata_t* _ud = stream_get_udata(stream);
 	if (!udi_cdc_is_tx_ready()) { return ERR_FLUSHED; }
-	___ExFlags(_ud, udi_cdc_putc('\r'));
+	___ExFlags(c, _ud->exflags, udi_cdc_putc('\r'));
 	udi_cdc_putc(c);
 	return 0;
 }
