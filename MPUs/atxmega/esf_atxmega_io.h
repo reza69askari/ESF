@@ -192,6 +192,7 @@ typedef union deviceInfo {
 #include "include/esf_xmega_usart.h"
 #include "include/esf_xmega_spi.h"
 #include "include/esf_xmega_peripherals.h"
+#include "include/esf_xmega_dma.h"
 
 
 #endif /* ESF_ATXMEAG_IO_H_ */
