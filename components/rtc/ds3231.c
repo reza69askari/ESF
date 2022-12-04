@@ -17,7 +17,6 @@
 //! >>>>>>> DS3231-Library
 #include <conf_board.h>
 #include "ds3231.h"
-#include <asf.h>
 #include <esf_compiler.h>
 #include <utils/esf_wait.h>
 
@@ -33,7 +32,7 @@
 #ifndef Config_DS3231_TwiSpeed
 #	define Config_DS3231_TwiSpeed	DS3231_I2C_FastSpeed
 #elif (Config_DS3231_TwiSpeed != DS3231_I2C_FastSpeed && Config_DS3231_TwiSpeed != DS3231_I2C_StandardSpeed)
-#	error ArgumentException": Config_DS3231_TwiSpeed"
+#	error ArgumentException: Config_DS3231_TwiSpeed
 #endif
 
 #pragma endregion Checker
@@ -41,7 +40,7 @@
 
 void ds3231_init(void)
 {
-	LogFunction();
+	LOG_FUNCTION();
 	twi_master_options_t opt = {
 		.speed = Config_DS3231_TwiSpeed,
 		.chip  = DS3231_ChipAddress
@@ -67,6 +66,7 @@ status_code_t ds3231_transfer(bool read, DS3231_Registers_t addr, void* buf, siz
 		//! Whether to wait if bus is busy (false) or return immediately (true)
 		.no_wait = false, //! false: do wait
 	};
+	LOG_ASSERT(pmic_get_enabled_levels() & CONF_PMIC_INTLVL, STR(IOException));
 	status_code_t _s = twi_master_transfer(DS3231_TWI, &dPackage, read);
 	LogStruct(buf, len);
 	return _s;
@@ -176,7 +176,7 @@ status_code_t ds3231_set_alarm(DS3231_Alerts_t alert, DS3231_Alarm_t* alarm, boo
 			return ds3231_write(DS3231_REG_Alarm2_Minutes, &alarm->Alarm1_Minutes, sizeof(DS3231_Alarm2_t));
 		default: break;
 	}
-	LogExceptionP(Error, ArgumentException, alert);
+	LogExceptionParam_lvl(Error, ArgumentException, alert);
 	return ERR_INVALID_ARG;
 }
 

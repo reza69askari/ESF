@@ -75,7 +75,10 @@ TimeSet(&(tm_t*){
  * */
 static inline void time_set_datetime (datetime_t* time)
 {
-	time_set(DateTime2TimeStamp(time));
+	timestamp_t 
+	_t = DateTime2TimeStamp(time); LOG_PARAM(_t);
+	_t = DateTime2TimeStamp(time); LOG_PARAM(_t);
+	time_set(_t);
 }
 
 /* 

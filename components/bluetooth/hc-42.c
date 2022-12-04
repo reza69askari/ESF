@@ -80,6 +80,12 @@ status_code_t hc42_init(sio_t* io)
 	
 	gpio_configure_pin(HC42_LPIN_pin, IO_Output | IO_InvertEnabled | IO_InitLow);
 	
+	gpio_configure_pin(HC42_RESET_pin, IO_Output | IO_InvertEnabled | IO_InitLow);
+	gpio_configure_pin(HC42_KEY_pin, IO_Output | IO_InvertDisable | IO_InitLow);
+	gpio_configure_pin(HC42_LINK_pin, IO_Input | IO_InvertEnabled);
+	gpio_configure_pin(HC42_LEDCON_pin, IO_Input | IO_InvertDisable);
+	gpio_configure_pin(HC42_LED1_pin, IO_Input | IO_InvertDisable);
+	
 	hc42_write_cmd(HC42_CMD_IBUUID_P, PSTR("0000FFE0-0000-1000-8000-00805F9B34FB"));
 	
 	return STATUS_OK;
@@ -90,7 +96,7 @@ void hc42_log_cmds(void)
 	printf_P(PSTR("HC42 available commands:"));
 	for (hc42_cmd_t i = 0; i < __HC42_CMDs_END; i++)
 	{
-		printf_P(PSTR("\r\n\t %02d: %S"), i, string_PReadString(&hc42_cmds_txt[i]));
+		printf_P(PSTR(NL"\t %02d: %S"), i, string_PReadString(&hc42_cmds_txt[i]));
 	}
 }
 

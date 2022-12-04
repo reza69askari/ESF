@@ -18,6 +18,7 @@
 
 #define Internal_RTC			0
 #define DS3231_RTC				1
+#define External_RTC			2	/* Manually ... //TODO: #ToDo$Important external rtc & internal temperature sensor ... */
 
 #include <conf_board.h>
 #include <esf_compiler.h>
@@ -40,6 +41,10 @@
 #	endif
 #	define __ExterTimeKeeper	ds3231
 #	include "include/esf_rtc_ds3231.h"
+#elif (Conf_TimeKeeper == External_RTC)
+	extern void rtc_init(void);
+	extern void rtc_set_time(timestamp_t time);
+	extern timestamp_t rtc_get_time(void);
 #else
 #	error NotImplementedException
 #endif
@@ -52,6 +57,17 @@
 	static inline void rtc_init(void) { keeper_init(); }
 	static inline void rtc_set_time(timestamp_t time) { keeper_set_time(time); }
 	static inline timestamp_t rtc_get_time(void) { return keeper_get_time(); }
+	//TODO: #ToDo below methods...
+	//bool rtc_alarm_has_triggered(void);
+	//void rtc_set_callback(rtc_callback_t callback);
+	//static inline void rtc_set_alarm(uint32_t time){}
+	//static inline void rtc_set_alarm_relative(TimeStamp offset) { rtc_set_alarm(rtc_get_time() + offset); }
+	
+	//ISR(RTC_OVF_vect, ISR_NAKED)
+	//{
+	//	system_tick();
+	//	reti();
+	//}
 #endif
 
 #endif // ESF_RTC_H_
